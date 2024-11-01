@@ -1,0 +1,419 @@
+<html>
+
+<head>
+    <title>
+        Chats
+    </title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background-color: white;
+            border-bottom: 1px solid #ddd;
+            margin-top: 10px;
+            /* Move down */
+        }
+        
+        .header img {
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
+        
+        .header h1 {
+            flex-grow: 1;
+            font-size: 20px;
+            margin: 0;
+        }
+        
+        .header .settings,
+        .header .search {
+            font-size: 20px;
+            color: #007bff;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+        
+        .stories {
+            display: flex;
+            padding: 10px;
+            background-color: white;
+            overflow-x: auto;
+            border-bottom: 1px solid #ddd;
+            cursor: grab;
+            margin-top: 10px;
+            /* Move down */
+        }
+        
+        .story {
+            text-align: center;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        
+        .story img {
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            border: 2px solid #007bff;
+        }
+        
+        .story p {
+            font-size: 12px;
+            margin: 5px 0 0 0;
+        }
+        
+        .tabs {
+            display: flex;
+            justify-content: space-around;
+            padding: 10px;
+            background-color: white;
+            border-bottom: 1px solid #ddd;
+            margin-top: 10px;
+            /* Move down */
+        }
+        
+        .tab {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .tab.active {
+            background-color: #007bff;
+            color: white;
+        }
+        
+        .chats {
+            padding: 10px;
+            overflow-y: auto;
+            height: calc(100vh - 250px);
+            /* Adjust height as needed */
+            cursor: grab;
+        }
+        
+        .chat {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background-color: white;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+        
+        .chat img {
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+        }
+        
+        .chat .details {
+            flex-grow: 1;
+        }
+        
+        .chat .details h2 {
+            font-size: 16px;
+            margin: 0;
+        }
+        
+        .chat .details p {
+            font-size: 12px;
+            color: #888;
+            margin: 5px 0 0 0;
+        }
+        
+        .chat .time {
+            font-size: 12px;
+            color: #888;
+        }
+        
+        .chat .badge {
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 5px;
+            font-size: 10px;
+            margin-left: 5px;
+        }
+        
+        .footer {
+            display: flex;
+            justify-content: space-around;
+            padding: 10px;
+            background-color: white;
+            border-top: 1px solid #ddd;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+        
+        .footer .icon {
+            font-size: 20px;
+            color: #888;
+            cursor: pointer;
+        }
+        
+        .footer .icon.active {
+            color: #007bff;
+        }
+    </style>
+    <script>
+        function openInNewTab(url) {
+            var win = window.open(url, '_blank');
+            win.focus();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const chats = document.querySelector('.chats');
+            const groupTab = document.querySelector('.tab:nth-child(2)');
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+
+            chats.addEventListener('mousedown', (e) => {
+                isDown = true;
+                chats.classList.add('active');
+                startX = e.pageX - chats.offsetLeft;
+                scrollLeft = chats.scrollLeft;
+            });
+
+            chats.addEventListener('mouseleave', () => {
+                isDown = false;
+                chats.classList.remove('active');
+            });
+
+            chats.addEventListener('mouseup', () => {
+                isDown = false;
+                chats.classList.remove('active');
+            });
+
+            chats.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - chats.offsetLeft;
+                const walk = (x - startX) * 3; //scroll-fast
+                chats.scrollLeft = scrollLeft - walk;
+            });
+
+            chats.addEventListener('click', () => {
+                groupTab.click();
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div class="header">
+        <img alt="User profile picture" height="40" src="user_profile.png" width="40" />
+        <h1>
+            Chats
+        </h1>
+        <i class="fas fa-search search" onclick="openInNewTab('search.html')">
+   </i>
+        <i class="fas fa-cog settings">
+   </i>
+    </div>
+    <div class="stories">
+        <div class="story" onclick="openInNewTab('status.html')">
+            <img alt="Your Story" height="60" src="https://storage.googleapis.com/a1aa/image/bQ7eVk7269U8HqpUevEaXB3qdwTzVf5hHKbeqB9nwYutAkxOB.jpg" width="60" />
+            <p>
+                Your Story
+            </p>
+        </div>
+        <div class="story" onclick="openInNewTab('status.html')">
+            <img alt="John's Story" height="60" src="https://storage.googleapis.com/a1aa/image/qTwfKieQLdpeioHEngqipbuuAmZZtneFpsfl7cRMpk4NAIjdC.jpg" width="60" />
+            <p>
+                John
+            </p>
+        </div>
+        <div class="story" onclick="openInNewTab('status.html')">
+            <img alt="Smith's Story" height="60" src="https://storage.googleapis.com/a1aa/image/mVe14Wo9aRxuNqiEXSnfdc1GfuWBRhyvtjg6Cjeha44cAkxOB.jpg" width="60" />
+            <p>
+                Smith
+            </p>
+        </div>
+        <div class="story" onclick="openInNewTab('status.html')">
+            <img alt="Rudy's Story" height="60" src="https://storage.googleapis.com/a1aa/image/Vcdwm4VFHkoGKtWkoSfpMhpeoz9QOIG52JQVcRD62yGDAZsTA.jpg" width="60" />
+            <p>
+                Rudy
+            </p>
+        </div>
+        <div class="story" onclick="openInNewTab('status.html')">
+            <img alt="Dagadu's Story" height="60" src="https://storage.googleapis.com/a1aa/image/E3mRVQDss66gMNkHhTiOAHD68lSBT06vyWNnqVKWSL4DQG7E.jpg" width="60" />
+            <p>
+                Dagadu
+            </p>
+        </div>
+    </div>
+    <div class="tabs">
+        <div class="tab active">
+            Chats
+        </div>
+        <div class="tab">
+            Group
+        </div>
+        <div class="tab">
+            Call
+        </div>
+    </div>
+    <div class="chats">
+        <div class="chat" onclick="openInNewTab('chat.html')">
+            <img alt="John Doe" height="50" src="https://storage.googleapis.com/a1aa/image/kfpaCp3yQrTTFqeES9RVkqjqJULxa83zfih6dqyl4xcaAyYnA.jpg" width="50" />
+            <div class="details">
+                <h2>
+                    <b>John Doe</b>
+                    <i class="fas fa-check-circle" style="color: #007bff;">
+      </i>
+                </h2>
+                <p>
+                    Lorem ipsum dolor sit amet consectetur
+                </p>
+            </div>
+            <div class="time">
+                08.01
+            </div>
+        </div>
+        <div class="chat" onclick="openInNewTab('chat.html')">
+            <img alt="Smith" height="50" src="https://storage.googleapis.com/a1aa/image/SvAbkn3XBfXPViWK7Km3WkjXWotGf17fkzTZyeDApI1EBkxOB.jpg" width="50" />
+            <div class="details">
+                <h2>
+                    <b>Smith</b>
+                    <i class="fas fa-check-circle" style="color: #007bff;">
+      </i>
+                </h2>
+                <p>
+                    Lorem ipsum dolor sit amet consectetur
+                </p>
+            </div>
+            <div class="time">
+                07.00
+            </div>
+        </div>
+        <div class="chat" onclick="openInNewTab('chat.html')">
+            <img alt="Dagadu" height="50" src="https://storage.googleapis.com/a1aa/image/aHcfwbXI9nxGVqeZIU2Rbgr8F4GSxO7NacWQ5TcHzMKWAZsTA.jpg" width="50" />
+            <div class="details">
+                <h2>
+                    <b>Dagadu</b>
+                    <i class="fas fa-check-circle" style="color: #007bff;">
+      </i>
+                </h2>
+                <p>
+                    Lorem ipsum dolor sit amet consectetur
+                </p>
+            </div>
+            <div class="time">
+                06.00
+                <span class="badge">
+      5
+     </span>
+            </div>
+        </div>
+        <div class="chat" onclick="openInNewTab('chat.html')">
+            <img alt="Samantha" height="50" src="https://storage.googleapis.com/a1aa/image/zkWlUxJCIwYaGdBZAU9thsNaSiTAsEjXK1B6gQMMTkYCQG7E.jpg" width="50" />
+            <div class="details">
+                <h2>
+                    <b>Samantha</b>
+                    <i class="fas fa-check-circle" style="color: #007bff;">
+      </i>
+                </h2>
+                <p>
+                    Lorem ipsum dolor sit amet consectetur
+                </p>
+            </div>
+            <div class="time">
+                08.30
+            </div>
+        </div>
+        <div class="chat" onclick="openInNewTab('chat.html')">
+            <img alt="Rudy Edward" height="50" src="https://storage.googleapis.com/a1aa/image/ZTRpF4XHLxpGEBmNsFB9Bsrox9NFvbz90ZP6H7KN6zGBQG7E.jpg" width="50" />
+            <div class="details">
+                <h2>
+                    <b>Rudy Edward</b>
+                    <i class="fas fa-check-circle" style="color: #007bff;">
+      </i>
+                </h2>
+                <p>
+                    Lorem ipsum dolor sit amet consectetur
+                </p>
+            </div>
+            <div class="time">
+                05.45
+            </div>
+        </div>
+        <div class="chat" onclick="openInNewTab('chat.html')">
+            <img alt="Sam Barber" height="50" src="https://storage.googleapis.com/a1aa/image/JpRSDsreY9ySayLni6Y93OleRuImEtjmBeLDPPOBpLKLAyYnA.jpg" width="50" />
+            <div class="details">
+                <h2>
+                    <b>Sam Barber</b>
+                    <i class="fas fa-check-circle" style="color: #007bff;">
+      </i>
+                </h2>
+                <p>
+                    Lorem ipsum dolor sit amet consectetur
+                </p>
+            </div>
+            <div class="time">
+                04.40
+            </div>
+        </div>
+        <div class="chat" onclick="openInNewTab('chat.html')">
+            <img alt="Mr. Edwardo Office" height="50" src="https://storage.googleapis.com/a1aa/image/o7YOnqcINvq8C9dE35L1RTSdgeDto3QNVQAOEufqDWdZAZsTA.jpg" width="50" />
+            <div class="details">
+                <h2>
+                    <b>Mr. Edwardo Office</b>
+                    <i class="fas fa-check-circle" style="color: #007bff;">
+      </i>
+                </h2>
+                <p>
+                    Lorem ipsum dolor sit amet consectetur
+                </p>
+            </div>
+            <div class="time">
+                06.30
+            </div>
+        </div>
+        <div class="chat" onclick="openInNewTab('chat.html')">
+            <img alt="Pasan" height="50" src="https://storage.googleapis.com/a1aa/image/placeholder.jpg" width="50" />
+            <div class="details">
+                <h2>
+                    <b>Pasan</b>
+                    <i class="fas fa-check-circle" style="color: #007bff;">
+      </i>
+                </h2>
+                <p>
+                    Lorem ipsum dolor sit amet consectetur
+                </p>
+            </div>
+            <div class="time">
+                09.00
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        <i class="fas fa-home icon" onclick="openInNewTab('hometab.html')">
+   </i>
+        <i class="fas fa-search icon" onclick="openInNewTab('search.html')">
+   </i>
+        <i class="fas fa-camera icon" onclick="openInNewTab('camara.html')">
+   </i>
+        <i class="fas fa-comment-dots icon active">
+   </i>
+    </div>
+</body>
+
+</html>

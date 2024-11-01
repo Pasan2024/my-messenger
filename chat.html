@@ -1,0 +1,459 @@
+<html>
+
+<head>
+    <title>
+        Chat Simulation
+    </title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #111B21;
+            color: #D1D7DB;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        
+        .chat-container {
+            width: 375px;
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #333;
+            border-radius: 10px;
+            overflow: hidden;
+            background-color: #0B141A;
+            position: relative;
+        }
+        
+        .header {
+            background-color: #202C33;
+            color: white;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        
+        .header img {
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        
+        .header .name {
+            flex-grow: 1;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .header .icons {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .header .icons i {
+            font-size: 20px;
+            cursor: pointer;
+        }
+        
+        .message-container {
+            padding: 10px;
+            background-color: #111B21;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+        
+        .message {
+            margin: 10px 0;
+            display: flex;
+            align-items: flex-end;
+        }
+        
+        .message.sent {
+            justify-content: flex-end;
+        }
+        
+        .message.received {
+            justify-content: flex-start;
+        }
+        
+        .message .text {
+            max-width: 60%;
+            padding: 10px;
+            border-radius: 10px;
+            position: relative;
+        }
+        
+        .message.sent .text {
+            background-color: #005C4B;
+            color: white;
+        }
+        
+        .message.received .text {
+            background-color: #202C33;
+            color: white;
+        }
+        
+        .message .text::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-style: solid;
+        }
+        
+        .message.sent .text::after {
+            border-width: 0 0 10px 10px;
+            border-color: transparent transparent #005C4B transparent;
+            top: 0;
+            right: -10px;
+        }
+        
+        .message.received .text::after {
+            border-width: 10px 10px 0 0;
+            border-color: #202C33 transparent transparent transparent;
+            top: 0;
+            left: -10px;
+        }
+        
+        .message .time {
+            font-size: 12px;
+            color: #8696A0;
+            margin-left: 5px;
+        }
+        
+        .message.sent .time {
+            margin-left: 0;
+            margin-right: 5px;
+        }
+        
+        .message .emoji {
+            font-size: 24px;
+        }
+        
+        .footer {
+            background-color: #202C33;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        
+        .footer input {
+            flex-grow: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 20px;
+            background-color: #2A3942;
+            color: white;
+        }
+        
+        .footer .icons {
+            display: flex;
+            gap: 15px;
+            margin-left: 10px;
+        }
+        
+        .footer .icons i {
+            font-size: 20px;
+            color: #8696A0;
+            cursor: pointer;
+        }
+        
+        .fullscreen-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .fullscreen-overlay img {
+            max-width: 375px;
+            max-height: 90vh;
+            border-radius: 10px;
+        }
+        
+        .emoji-picker {
+            display: none;
+            position: absolute;
+            bottom: 60px;
+            left: 10px;
+            background-color: #2A3942;
+            border-radius: 10px;
+            padding: 10px;
+            z-index: 1000;
+            max-width: 300px;
+            flex-wrap: wrap;
+            display: flex;
+        }
+        
+        .emoji-picker .emoji {
+            font-size: 24px;
+            cursor: pointer;
+            margin: 5px;
+        }
+    </style>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+</head>
+
+<body>
+    <div class="chat-container">
+        <div class="header">
+            <i class="fas fa-arrow-left" id="home-button" style="margin-right: 10px;"></i>
+            <img alt="Profile picture" height="40" id="profile-picture" src="https://storage.googleapis.com/a1aa/image/76DdSXfCPMydT6OKjLZbqcNaPDjO05C61DPF7eI7hf7FMyYnA.jpg" width="40" />
+            <div class="name" id="contact-name">
+                Shreyaaaa
+            </div>
+            <div class="icons">
+                <i class="fas fa-video" id="video-call-button">
+     </i>
+                <i class="fas fa-phone" id="call-button">
+     </i>
+            </div>
+        </div>
+        <div class="message-container" id="message-container">
+            <div class="message received">
+                <div class="text">
+                    <div class="emoji">
+                        🔒
+                    </div>
+                    <div>
+                        Messages and calls are end-to-end encrypted. No one outside of this chat, not even WhatsApp, can read or listen to them. Tap to learn more.
+                    </div>
+                </div>
+            </div>
+            <div class="message sent">
+                <div class="text">
+                    Happy birthday Honey bandar baby❤️❤️🐒🐒
+                    <div class="time">
+                        12:00 AM
+                    </div>
+                </div>
+            </div>
+            <div class="message received">
+                <div class="text">
+                    Thank you babbyy ❤️
+                    <div class="time">
+                        9:30 AM
+                    </div>
+                </div>
+            </div>
+            <div class="message sent">
+                <div class="text">
+                    <div class="emoji">
+                        ❤️
+                    </div>
+                    <div class="time">
+                        9:49 AM
+                    </div>
+                </div>
+            </div>
+            <div class="message sent">
+                <div class="text">
+                    Maine 12 bje msg kra tha ye 11:59 pe kaise gya😑😂
+                    <div class="time">
+                        9:51 AM
+                    </div>
+                </div>
+            </div>
+            <div class="message received">
+                <div class="text">
+                    Mere m toh 12 bje hi dikha raha h
+                    <div class="time">
+                        10:11 AM
+                    </div>
+                </div>
+            </div>
+            <div class="message sent">
+                <div class="text">
+                    Achaaa
+                    <div class="time">
+                        11:30 AM
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            <input placeholder="Type a message" type="text" id="message-input" />
+            <div class="icons">
+                <i class="fas fa-smile" id="emoji-button">
+     </i>
+                <i class="fas fa-paper-plane" id="send-button">
+     </i>
+                <i class="fas fa-microphone" id="mic-button">
+     </i>
+            </div>
+        </div>
+        <div class="emoji-picker" id="emoji-picker">
+            <span class="emoji">😀</span>
+            <span class="emoji">😁</span>
+            <span class="emoji">😂</span>
+            <span class="emoji">🤣</span>
+            <span class="emoji">😃</span>
+            <span class="emoji">😄</span>
+            <span class="emoji">😅</span>
+            <span class="emoji">😆</span>
+            <span class="emoji">😉</span>
+            <span class="emoji">😊</span>
+            <span class="emoji">😋</span>
+            <span class="emoji">😎</span>
+            <span class="emoji">😍</span>
+            <span class="emoji">😘</span>
+            <span class="emoji">😗</span>
+            <span class="emoji">😙</span>
+            <span class="emoji">😚</span>
+            <span class="emoji">🙂</span>
+            <span class="emoji">🤗</span>
+            <span class="emoji">🤩</span>
+        </div>
+    </div>
+    <div class="fullscreen-overlay" id="fullscreen-overlay">
+        <img alt="Full screen profile picture" src="https://storage.googleapis.com/a1aa/image/76DdSXfCPMydT6OKjLZbqcNaPDjO05C61DPF7eI7hf7FMyYnA.jpg" style="max-width: 375px; max-height: 90vh;" />
+    </div>
+    <script>
+        function sendMessage() {
+            const messageInput = document.getElementById('message-input');
+            const messageText = messageInput.value;
+            if (messageText.trim() !== '') {
+                const messageContainer = document.getElementById('message-container');
+                const newMessage = document.createElement('div');
+                newMessage.classList.add('message', 'sent');
+                newMessage.innerHTML = `
+                <div class="text">
+                    ${messageText}
+                    <div class="time">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                </div>
+            `;
+                messageContainer.appendChild(newMessage);
+                messageInput.value = '';
+                messageContainer.scrollTop = messageContainer.scrollHeight;
+            }
+        }
+
+        document.getElementById('message-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        document.getElementById('send-button').addEventListener('click', function() {
+            sendMessage();
+        });
+
+        document.getElementById('profile-picture').addEventListener('click', function() {
+            document.getElementById('fullscreen-overlay').style.display = 'flex';
+        });
+
+        document.getElementById('fullscreen-overlay').addEventListener('click', function() {
+            document.getElementById('fullscreen-overlay').style.display = 'none';
+        });
+
+        document.getElementById('emoji-button').addEventListener('click', function() {
+            const emojiPicker = document.getElementById('emoji-picker');
+            emojiPicker.style.display = emojiPicker.style.display === 'none' ? 'flex' : 'none';
+        });
+
+        document.querySelectorAll('.emoji-picker .emoji').forEach(function(emoji) {
+            emoji.addEventListener('click', function() {
+                const messageInput = document.getElementById('message-input');
+                messageInput.value += emoji.textContent;
+                document.getElementById('emoji-picker').style.display = 'none';
+            });
+        });
+
+        document.getElementById('contact-name').addEventListener('click', function() {
+            window.open('https://example.com/shreyaaaa/info', '_blank');
+        });
+
+        document.getElementById('call-button').addEventListener('click', function() {
+            alert('Calling Shreyaaaa...');
+        });
+
+        document.getElementById('video-call-button').addEventListener('click', function() {
+            alert('Video calling Shreyaaaa...');
+        });
+
+        document.getElementById('home-button').addEventListener('click', function() {
+            window.open('https://example.com/home', '_blank');
+        });
+
+        let isRecording = false;
+        let mediaRecorder;
+        let audioChunks = [];
+
+        async function startRecording() {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                alert('Microphone not supported on this browser.');
+                return;
+            }
+
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    audio: true
+                });
+                mediaRecorder = new MediaRecorder(stream);
+
+                mediaRecorder.ondataavailable = function(event) {
+                    audioChunks.push(event.data);
+                };
+
+                mediaRecorder.onstop = function() {
+                    const audioBlob = new Blob(audioChunks, {
+                        type: 'audio/wav'
+                    });
+                    audioChunks = [];
+                    const audioUrl = URL.createObjectURL(audioBlob);
+                    const audio = new Audio(audioUrl);
+                    audio.play();
+
+                    const messageContainer = document.getElementById('message-container');
+                    const newMessage = document.createElement('div');
+                    newMessage.classList.add('message', 'sent');
+                    newMessage.innerHTML = `
+                    <div class="text">
+                        <i class="fas fa-microphone"></i> Voice message
+                        <div class="time">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                    </div>
+                `;
+                    messageContainer.appendChild(newMessage);
+                    messageContainer.scrollTop = messageContainer.scrollHeight;
+                };
+
+                mediaRecorder.start();
+                alert('Recording started...');
+            } catch (error) {
+                alert('Microphone access denied.');
+            }
+        }
+
+        document.getElementById('mic-button').addEventListener('mousedown', function() {
+            isRecording = true;
+            startRecording();
+        });
+
+        document.getElementById('mic-button').addEventListener('mouseup', function() {
+            if (isRecording) {
+                isRecording = false;
+                if (mediaRecorder && mediaRecorder.state === 'recording') {
+                    mediaRecorder.stop();
+                    alert('Recording stopped and sent to Shreyaaaa.');
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
